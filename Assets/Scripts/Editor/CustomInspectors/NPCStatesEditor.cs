@@ -12,14 +12,11 @@ public class NPCStatesEditor : Editor
     private bool _isDragging = false;
     private int _draggingIndex = -1;
 
-    private int _previousSize = -1;
-
     private void OnEnable()
     {
         _npcStates = (NPCStates)target;
         _statesProp = serializedObject.FindProperty("_states");
-        _previousSize = _statesProp.arraySize;
-        NormalizeAndInitializeIfNeeded();
+        NormalizeIfNeeded();
     }
 
     public override void OnInspectorGUI()
@@ -30,8 +27,7 @@ public class NPCStatesEditor : Editor
         EditorGUILayout.PropertyField(_statesProp, true);
         if (EditorGUI.EndChangeCheck())
         {
-            HandleStateInitialization();
-            NormalizeAndInitializeIfNeeded();
+            NormalizeIfNeeded();
         }
 
         EditorGUILayout.Space(20);
@@ -44,41 +40,7 @@ public class NPCStatesEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void HandleStateInitialization()
-    {
-        var enumValues = System.Enum.GetValues(typeof(NPCState));
-        int newSize = _statesProp.arraySize;
-
-        if (_previousSize < 0)
-        {
-            _previousSize = 0;
-        }
-
-        if (newSize > _previousSize)
-        {
-            int nextEnumIndex = 0;
-
-            if (_previousSize > 0 && _statesProp.arraySize > _previousSize)
-            {
-                var lastElement = _statesProp.GetArrayElementAtIndex(_previousSize - 1);
-                var lastEnumIndex = lastElement.FindPropertyRelative("state").enumValueIndex;
-                nextEnumIndex = (lastEnumIndex + 1) % enumValues.Length;
-            }
-
-            for (int i = _previousSize; i < newSize; i++)
-            {
-                var newElement = _statesProp.GetArrayElementAtIndex(i);
-                newElement.FindPropertyRelative("state").enumValueIndex = nextEnumIndex;
-                newElement.FindPropertyRelative("coefficient").floatValue = 100f / newSize;
-
-                nextEnumIndex = (nextEnumIndex + 1) % enumValues.Length;
-            }
-        }
-
-        _previousSize = newSize;
-    }
-
-    private void NormalizeAndInitializeIfNeeded()
+    private void NormalizeIfNeeded()
     {
         if (_statesProp.arraySize == 0) return;
 
@@ -102,6 +64,7 @@ public class NPCStatesEditor : Editor
                 coeff.floatValue = defaultValue;
         }
 
+        // Normalize
         total = 0f;
         for (int i = 0; i < _statesProp.arraySize; i++)
             total += _statesProp.GetArrayElementAtIndex(i).FindPropertyRelative("coefficient").floatValue;
@@ -120,7 +83,6 @@ public class NPCStatesEditor : Editor
     {
         int count = _statesProp.arraySize;
         float chartHeight = Mathf.Max(MinBarHeight * count, 100);
-
         var areaRect = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - 40, chartHeight);
         EditorGUI.DrawRect(areaRect, new Color(0.15f, 0.15f, 0.15f));
 
@@ -143,82 +105,72 @@ public class NPCStatesEditor : Editor
             {
                 alignment = TextAnchor.MiddleLeft,
                 normal = { textColor = Color.black },
+                hover = { textColor = Color.black },
                 fontSize = 12,
                 padding = new RectOffset(6, 0, 0, 0)
             };
             GUI.Label(barRect, $"{state} - {coeff.floatValue:F1}%", style);
 
-            var handleRect = new Rect(barRect.x, barRect.yMax - 3, barRect.width, 6);
-            EditorGUIUtility.AddCursorRect(handleRect, MouseCursor.ResizeVertical);
-
-            if (Event.current.type == EventType.MouseDown && handleRect.Contains(Event.current.mousePosition))
+            if (i < count - 1)
             {
-                _isDragging = true;
-                _draggingIndex = i;
-                Event.current.Use();
-            }
+                var handleRect = new Rect(barRect.x, barRect.yMax - 3, barRect.width, 6);
+                EditorGUIUtility.AddCursorRect(handleRect, MouseCursor.ResizeVertical);
 
-            if (_isDragging && _draggingIndex == i && Event.current.type == EventType.MouseDrag)
-            {
-                float deltaPercent = Event.current.delta.y / totalHeight * 100f;
-                AdjustCoefficients(i, deltaPercent);
-                Event.current.Use();
-            }
+                if (Event.current.type == EventType.MouseDown && handleRect.Contains(Event.current.mousePosition))
+                {
+                    _isDragging = true;
+                    _draggingIndex = i;
+                    Event.current.Use();
+                }
 
-            if (Event.current.type == EventType.MouseUp && _isDragging)
-            {
-                _isDragging = false;
-                _draggingIndex = -1;
-                Event.current.Use();
+                if (_isDragging && _draggingIndex == i && Event.current.type == EventType.MouseDrag)
+                {
+                    float deltaPercent = Event.current.delta.y / totalHeight * 100f;
+                    AdjustPairCoefficients(i, deltaPercent);
+                    Event.current.Use();
+                }
+
+                if (Event.current.type == EventType.MouseUp && _isDragging)
+                {
+                    _isDragging = false;
+                    _draggingIndex = -1;
+                    Event.current.Use();
+                }
             }
 
             y += barHeight;
         }
     }
 
-    private void AdjustCoefficients(int index, float delta)
+    private void AdjustPairCoefficients(int index, float delta)
     {
-        var coeff = _statesProp.GetArrayElementAtIndex(index).FindPropertyRelative("coefficient");
-        float newVal = Mathf.Clamp(coeff.floatValue + delta, 1f, 99f);
-        float deltaApplied = newVal - coeff.floatValue;
+        var a = _statesProp.GetArrayElementAtIndex(index).FindPropertyRelative("coefficient");
+        var b = _statesProp.GetArrayElementAtIndex(index + 1).FindPropertyRelative("coefficient");
 
-        float totalOthers = 0f;
-        for (int i = 0; i < _statesProp.arraySize; i++)
-        {
-            if (i == index) continue;
-            totalOthers += _statesProp.GetArrayElementAtIndex(i).FindPropertyRelative("coefficient").floatValue;
-        }
+        float aVal = a.floatValue;
+        float bVal = b.floatValue;
 
-        if (Mathf.Approximately(totalOthers, 0f)) return;
+        float newA = Mathf.Clamp(aVal + delta, 0f, aVal + bVal);
+        float newB = (aVal + bVal) - newA;
 
-        coeff.floatValue = newVal;
-
-        float scale = (100f - newVal) / totalOthers;
-
-        for (int i = 0; i < _statesProp.arraySize; i++)
-        {
-            if (i == index) continue;
-            var other = _statesProp.GetArrayElementAtIndex(i).FindPropertyRelative("coefficient");
-            other.floatValue = Mathf.Clamp(other.floatValue * scale, 1f, 99f);
-        }
-
-        NormalizeAndInitializeIfNeeded();
+        a.floatValue = newA;
+        b.floatValue = newB;
     }
 
     private Color GetColor(int index)
     {
         Color[] colors = new Color[]
         {
-            new Color32(255, 105, 97, 255),    // Coral Red
-            new Color32(97, 189, 255, 255),    // Sky Blue
-            new Color32(255, 203, 112, 255),   // Apricot
-            new Color32(121, 237, 187, 255),   // Mint Green
-            new Color32(178, 127, 255, 255),   // Lavender
-            new Color32(255, 153, 102, 255),   // Peach
-            new Color32(222, 222, 222, 255),   // Soft Grey
-            new Color32(255, 128, 191, 255),   // Bubblegum Pink
-            new Color32(102, 255, 218, 255),   // Aqua
-            new Color32(255, 182, 193, 255)    // Light Pink
+            new Color32(255, 99, 132, 255),
+            new Color32(54, 162, 235, 255),
+            new Color32(255, 206, 86, 255),
+            new Color32(75, 192, 192, 255),
+            new Color32(153, 102, 255, 255),
+            new Color32(255, 159, 64, 255),
+            new Color32(199, 199, 199, 255),
+            new Color32(255, 99, 255, 255),
+            new Color32(100, 255, 218, 255),
+            new Color32(240, 128, 128, 255)
         };
 
         return colors[index % colors.Length];

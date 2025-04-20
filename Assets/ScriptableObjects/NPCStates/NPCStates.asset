@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _states:
   - state: 0
-    coefficient: 17.797838
+    coefficient: 28.40698
   - state: 1
-    coefficient: 43.500175
+    coefficient: 48.0689
   - state: 2
-    coefficient: 16.993793
+    coefficient: 5.5120716
   - state: 3
-    coefficient: 21.708193
+    coefficient: 18.012047
