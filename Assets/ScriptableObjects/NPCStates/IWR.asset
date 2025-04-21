@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d9ae4aefb78e4809b500faccb7cd59d, type: 3}
-  m_Name: NPCStates
+  m_Name: IWR
   m_EditorClassIdentifier: 
   _states:
   - state: 0
-    coefficient: 28.40698
+    coefficient: 34.64775
   - state: 1
-    coefficient: 48.0689
+    coefficient: 30.629223
   - state: 2
-    coefficient: 5.5120716
-  - state: 3
-    coefficient: 18.012047
+    coefficient: 34.723026

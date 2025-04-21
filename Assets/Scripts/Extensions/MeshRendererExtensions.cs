@@ -19,7 +19,7 @@ public static class MeshFilterExtensions
             return Vector3.zero;
         }
 
-        Mesh mesh = meshFilter.sharedMesh;
+        Mesh mesh = meshFilter.mesh;
         int selectedTriangle = 0;
 
         if(usePreciseCalculation)

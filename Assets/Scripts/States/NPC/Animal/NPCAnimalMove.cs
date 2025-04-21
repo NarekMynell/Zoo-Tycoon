@@ -6,15 +6,15 @@ namespace States
 {
     public class NPCAnimalMove : NPCMove
     {
-        private MeshFilter _meshFilter;
         private NavMeshAgent _navMeshAgent;
         private UnityAction _finishCallback;
+        private float _areaRadius;
 
-        public NPCAnimalMove(Animator animator, string clipName, NavMeshAgent navMeshAgent, MeshFilter meshFilter, UnityAction finishCallback) : base(animator, clipName)
+        public NPCAnimalMove(Animator animator, string clipName, NavMeshAgent navMeshAgent, float areaRadius, UnityAction finishCallback) : base(animator, clipName)
         {
             _navMeshAgent = navMeshAgent;
-            _meshFilter = meshFilter;
             _finishCallback = finishCallback;
+            _areaRadius = areaRadius;
         }
 
         public override void Enter()
@@ -24,7 +24,7 @@ namespace States
             if (!_navMeshAgent.isOnNavMesh)
             {
 
-                if (NavMesh.SamplePosition(_meshFilter.transform.position, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(_navMeshAgent.transform.position, out NavMeshHit hit, 5.0f, NavMesh.AllAreas))
                 {
                     _navMeshAgent.Warp(hit.position);
                 }
@@ -35,7 +35,9 @@ namespace States
                 }
             }
 
-            Vector3 destination = _meshFilter.GetRandomPointOnSurface();
+            //Vector3 destination = _meshFilter.GetRandomPointOnSurface();
+            Vector3 destination = _navMeshAgent.transform.parent.position + Random.insideUnitSphere * _areaRadius;
+            destination.y = _navMeshAgent.transform.position.y;
             _navMeshAgent.SetDestination(destination);
         }
 
@@ -44,7 +46,9 @@ namespace States
             base.Update();
 
             _animator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+
             if (HasReachedDestination()) _finishCallback?.Invoke();
+            if (_navMeshAgent.pathStatus == NavMeshPathStatus.PathInvalid) _finishCallback?.Invoke();
         }
         
 

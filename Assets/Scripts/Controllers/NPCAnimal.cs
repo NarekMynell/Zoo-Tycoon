@@ -7,8 +7,9 @@ public class NPCAnimal : MonoBehaviour, IAnimal
 {
     [SerializeField] private Scriptables.NPCStates _npcStates;
     [SerializeField] private Animator _animator;
-    [SerializeField] private MeshFilter _cage;
     [SerializeField] private NavMeshAgent _navMeshAgent;
+    [Header("Movement")]
+    [SerializeField] private float _movAreaRadius = 5f;
     [SerializeField] private float _walkSpeed = 1f;
     [SerializeField] private float _runSpeed = 4f;
     private States.StateMachine _stateMachine;
@@ -22,7 +23,7 @@ public class NPCAnimal : MonoBehaviour, IAnimal
         _stateMachine = new States.StateMachine();
         _animalIdle = new(_animator, SetRandomState);
         _animalEat = new(_animator, SetRandomState);
-        _animalMove = new(_animator, "Move", _navMeshAgent, _cage, SetRandomState);
+        _animalMove = new(_animator, "Move", _navMeshAgent, _movAreaRadius, SetRandomState);
     }
 
     void Start()
