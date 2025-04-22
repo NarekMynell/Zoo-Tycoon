@@ -810,6 +810,11 @@ PrefabInstance:
       propertyPath: _walkSpeed
       value: 0.65
       objectReference: {fileID: 0}
+    - target: {fileID: 1299760613019228616, guid: 8c99e62fed23944fca93e6272c1e06f8,
+        type: 3}
+      propertyPath: _movAreaRadius
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5134928716795842988, guid: 8c99e62fed23944fca93e6272c1e06f8,
         type: 3}
       propertyPath: m_Controller
@@ -818,7 +823,7 @@ PrefabInstance:
     - target: {fileID: 6006698180954205843, guid: 8c99e62fed23944fca93e6272c1e06f8,
         type: 3}
       propertyPath: m_Name
-      value: Pinguin Variant
+      value: Pinguin
       objectReference: {fileID: 0}
     - target: {fileID: 6794562328372013289, guid: 8c99e62fed23944fca93e6272c1e06f8,
         type: 3}
