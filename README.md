@@ -2,7 +2,7 @@
 
 A low-poly 3D idle tycoon game prototype built in Unity. The player manages a zoo-style business empire, upgrading various facilities to increase revenue over time. The project showcases core gameplay systems, custom UI, saving/loading, and scene management using native Unity tools only.
 
-![Gameplay Screenshot](screenshot.jpg) <!-- Add your screenshot here -->
+![Gameplay Screenshot](screenshot.png) <!-- Add your screenshot here -->
 
 ---
 

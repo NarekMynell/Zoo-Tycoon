@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,9 @@ public class SettingsView : MonoBehaviour
     [SerializeField] private Toggle _soundToggle;
     [SerializeField] private Toggle _musicToggle;
     [SerializeField] private Button _testMoneyBtn;
+
+    public static event Action<bool> OnSoundActivityChanged;
+    public static event Action<bool> OnMusicActivityChanged;
 
 
     private void Awake()
@@ -26,11 +30,13 @@ public class SettingsView : MonoBehaviour
     private void OnSoundToggleChanged(bool value)
     {
         GameData.sound = value;
+        OnSoundActivityChanged?.Invoke(value);
     }
 
     private void OnMusicToggleChanged(bool value)
     {
         GameData.music = value;
+        OnMusicActivityChanged?.Invoke(value);
     }
 
     private void FillMoney()
