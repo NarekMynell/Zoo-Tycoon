@@ -59,7 +59,6 @@ public class CameraController : MonoBehaviour
         Vector3 targetPoint = transform.position + ray.direction * 100f;
         // Calculate the zoom factor
         float zoomFactor = Mathf.Clamp(transform.position.y - inputDelta * _zoomSpeed * Time.deltaTime, _minHeight, _maxHeight) / transform.position.y;
-        Debug.Log(inputDelta * _zoomSpeed * Time.deltaTime);
 
         // Adjust the camera position
         Vector3 direction = transform.position - targetPoint;
