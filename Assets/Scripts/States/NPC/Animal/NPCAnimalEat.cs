@@ -5,11 +5,11 @@ namespace States
 {
     public class NPCAnimalEat : NPCEat
     {
-        private UnityAction _finishCallback;
+        private System.Action _finishCallback;
         private float _remainingTime;
 
         
-        public NPCAnimalEat(Animator animator, UnityAction finishCallback, string clipName = default) : base(animator, clipName)
+        public NPCAnimalEat(Animator animator, System.Action finishCallback, string clipName = default) : base(animator, clipName)
         {
             _finishCallback = finishCallback;
         }

@@ -14,6 +14,12 @@ public class CameraController : MonoBehaviour
     [Header("Movement Settings")]
     public float _moveSpeed = 2000f;
     public float _zoomSpeed = 6f;
+    private float _defaultY;
+
+    void Awake()
+    {
+        _defaultY = transform.position.y;
+    }
 
 
     private void OnEnable()
@@ -33,7 +39,9 @@ public class CameraController : MonoBehaviour
         Vector3 horizontalDir = Vector3.ProjectOnPlane(transform.right, Vector3.up).normalized;
         Vector3 verticalDir = Vector3.ProjectOnPlane(transform.up, Vector3.up).normalized;
 
-        float multiplayer = _moveSpeed * Time.deltaTime / Screen.height;
+
+        float speed = _moveSpeed * transform.position.y / _defaultY;
+        float multiplayer = speed * Time.deltaTime / Screen.height;
         float deltaHorizontal = inputDelta.x * multiplayer;
         float deltaVertical = inputDelta.y * multiplayer;
 
@@ -48,9 +56,10 @@ public class CameraController : MonoBehaviour
     {
         // Convert inputCentre from screen space to world space
         Ray ray = Camera.main.ScreenPointToRay(inputCentre);
-        Vector3 targetPoint = transform.position + ray.direction;;
+        Vector3 targetPoint = transform.position + ray.direction * 100f;
         // Calculate the zoom factor
         float zoomFactor = Mathf.Clamp(transform.position.y - inputDelta * _zoomSpeed * Time.deltaTime, _minHeight, _maxHeight) / transform.position.y;
+        Debug.Log(inputDelta * _zoomSpeed * Time.deltaTime);
 
         // Adjust the camera position
         Vector3 direction = transform.position - targetPoint;

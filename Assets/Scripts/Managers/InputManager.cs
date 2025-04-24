@@ -1,17 +1,33 @@
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    public static UnityAction<Vector2> onSwiped;
-    public static UnityAction<Vector2, float> onZoomed;
-    private bool _enabled;
+    public static System.Action<Vector2> onSwiped;
+    public static System.Action<Vector2, float> onZoomed;
+    private bool Enabled => InputDisabler.IsInputEnabled;
+    private GameInput _input;
+
+    void Awake()
+    {
+        _input = new();
+        _input.Player.Click.performed += HandlePointerClick;
+    }
+
+    void OnEnable()
+    {
+        _input.Player.Enable();
+    }
+
+    void OnDisable()
+    {
+        _input.Player.Disable();
+    }
 
 
     private void Update()
     {
-        if (!_enabled) return;
+        if (!Enabled) return;
         
         if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
         {
@@ -21,17 +37,6 @@ public class InputManager : MonoBehaviour
         {
             HandleMouseInput();
         }
-    }
-
-
-    void OnEnable()
-    {
-        _enabled = true;
-    }
-
-    void OnDisable()
-    {
-        _enabled = false;
     }
 
     private void HandleTouchInput()
@@ -101,6 +106,29 @@ public class InputManager : MonoBehaviour
         {
             Vector2 centrePos = Mouse.current.position.ReadValue();
             onZoomed?.Invoke(centrePos, zoomDelta);
+        }
+    }
+
+    private void HandlePointerClick(InputAction.CallbackContext context)
+    {
+        if (!Enabled) return;
+        Vector2 inputPos = Pointer.current.position.ReadValue();
+        Ray ray = Camera.main.ScreenPointToRay(inputPos);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Transform tf = hit.transform;
+            while(tf != null)
+            {
+                if(tf.TryGetComponent(out IClickable clickable))
+                {
+                    clickable.OnClicked();
+                    break;
+                }
+                else
+                {
+                    tf = tf.parent;
+                }
+            }
         }
     }
 }

@@ -1,18 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private TextMeshProUGUI _totalMoney;
+    [SerializeField] private TextMeshProUGUI _incomePerMinute;
+    [SerializeField] private BusinessSettingsView _businessSettingsView;
+
+
+    private void OnEnable()
     {
-        
+        BusinessBehaviour.OnBusinessClicked += _businessSettingsView.Activate;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        BusinessBehaviour.OnBusinessClicked -= _businessSettingsView.Activate;
+    }
+
+    private void Update()
+    {
+        _totalMoney.text = GameData.totalMoney.GetComaFormat();
+        _incomePerMinute.text = GameData.totalIncomePerMinute.FormatLargeNumber() + " /min";
     }
 }

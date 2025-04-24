@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91ce9cb91df06450c8242c454b0016c6, type: 3}
+  m_Name: HorseCageBusinessData
+  m_EditorClassIdentifier: 
+  _name: Horse Cage
+  _levels:
+  - _incomePerMinute: 60
+    _upgradeCost: 500
+  - _incomePerMinute: 110
+    _upgradeCost: 1100
+  - _incomePerMinute: 240
+    _upgradeCost: 2300
+  - _incomePerMinute: 530
+    _upgradeCost: 6200
+  - _incomePerMinute: 1800
+    _upgradeCost: 21000
+  - _incomePerMinute: 6500
+    _upgradeCost: 77000
+  - _incomePerMinute: 26800
+    _upgradeCost: 390000
+  - _incomePerMinute: 226000
+    _upgradeCost: 2500000
+  - _incomePerMinute: 1971300
+    _upgradeCost: 21713000
+  - _incomePerMinute: 162000000
+    _upgradeCost: 2e+9
+  _defaultLevel: 1
+  _autoSendMoney: 1

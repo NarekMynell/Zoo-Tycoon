@@ -5,11 +5,11 @@ namespace States
 {
     public class NPCAnimalIdle : NPCIdle
     {
-        private UnityAction _finishCallback;
+        private System.Action _finishCallback;
         private float _remainingTime;
 
 
-        public NPCAnimalIdle(Animator animator, UnityAction finishCallback, string clipName = default) : base(animator, clipName)
+        public NPCAnimalIdle(Animator animator, System.Action finishCallback, string clipName = default) : base(animator, clipName)
         {
             _finishCallback = finishCallback;
         }

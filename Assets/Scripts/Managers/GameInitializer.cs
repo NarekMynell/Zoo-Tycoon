@@ -13,10 +13,10 @@ public class GameInitializer : MonoBehaviour
 
     private AsyncOperationHandle<SceneInstance>? _loadHandle;
     private bool _isSceneLoaded = false;
-    private bool _isSceneActivated = false;
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
         LoadScene(mainSceneAddress);
     }
 
@@ -44,6 +44,7 @@ public class GameInitializer : MonoBehaviour
 
         if (handle.Status == AsyncOperationStatus.Succeeded)
         {
+            OnProgressUpdated(100);
             _isSceneLoaded = true;
             OnSceneLoaded();
         }
@@ -60,7 +61,6 @@ public class GameInitializer : MonoBehaviour
             _loadHandle.Value.Result.ActivateAsync().completed += _ =>
             {
                 SceneManager.SetActiveScene(_loadHandle.Value.Result.Scene);
-                _isSceneActivated = true;
 
                 SceneManager.UnloadSceneAsync("InitScene");
             };
@@ -73,7 +73,7 @@ public class GameInitializer : MonoBehaviour
 
     private void OnProgressUpdated(float progress)
     {
-        _progressView.Set(progress);
+        _progressView.Set(progress, 100);
     }
 
     private void OnSceneLoaded()

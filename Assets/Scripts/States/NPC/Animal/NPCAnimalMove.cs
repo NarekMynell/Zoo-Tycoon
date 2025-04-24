@@ -7,10 +7,10 @@ namespace States
     public class NPCAnimalMove : NPCMove
     {
         private NavMeshAgent _navMeshAgent;
-        private UnityAction _finishCallback;
+        private System.Action _finishCallback;
         private float _areaRadius;
 
-        public NPCAnimalMove(Animator animator, string clipName, NavMeshAgent navMeshAgent, float areaRadius, UnityAction finishCallback) : base(animator, clipName)
+        public NPCAnimalMove(Animator animator, string clipName, NavMeshAgent navMeshAgent, float areaRadius, System.Action finishCallback) : base(animator, clipName)
         {
             _navMeshAgent = navMeshAgent;
             _finishCallback = finishCallback;

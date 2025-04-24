@@ -1,5 +1,4 @@
-public interface IBusiness
+public interface IBusiness : ILevelable
 {
-    public float GetIncomeInMinute();
-    public float SendIncome();
+    public void SendIncome();
 }
