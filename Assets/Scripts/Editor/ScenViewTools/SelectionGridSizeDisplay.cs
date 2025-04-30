@@ -50,7 +50,7 @@ public class SelectionGridSizeDisplay
         };
 
         Handles.BeginGUI();
-        GUILayout.BeginArea(new Rect(40, 5, 70, 80), "Grid Size", titleStyle);
+        GUILayout.BeginArea(new Rect(40, 5, 90, 80), "Grid Size", titleStyle);
         GUILayout.Label($"W:  {FormatSmart(size.x)}", labelStyle);
         GUILayout.Label($"H: {FormatSmart(size.y)}", labelStyle);
         GUILayout.Label($"D:  {FormatSmart(size.z)}", labelStyle);

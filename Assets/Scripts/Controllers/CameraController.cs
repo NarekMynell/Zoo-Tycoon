@@ -19,16 +19,16 @@ public class CameraController : MonoBehaviour
     void Awake()
     {
         _defaultY = transform.position.y;
-    }
 
-
-    private void OnEnable()
-    {
+    #if UNITY_EDITOR
+        _moveSpeed *= 10;
+    #endif
         InputManager.onSwiped += Move;
         InputManager.onZoomed += Zoom;
+
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         InputManager.onSwiped -= Move;
         InputManager.onZoomed -= Zoom;
@@ -59,7 +59,7 @@ public class CameraController : MonoBehaviour
         Vector3 targetPoint = transform.position + ray.direction * 100f;
         // Calculate the zoom factor
         float zoomFactor = Mathf.Clamp(transform.position.y - inputDelta * _zoomSpeed * Time.deltaTime, _minHeight, _maxHeight) / transform.position.y;
-
+ 
         // Adjust the camera position
         Vector3 direction = transform.position - targetPoint;
         Vector3 newPos = targetPoint + direction * zoomFactor;

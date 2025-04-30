@@ -8,8 +8,10 @@ public class BusinessBehaviour : MonoBehaviour, IBusiness, IClickable
     public static event System.Action<BusinessBehaviour> OnBusinessClicked;
     public static event System.Action<double> OnIncomeSent;
     public static event System.Action<double> OnUpgraded;
+    public event System.Action OnActivated;
     // public static event System.Action OnLevelSet;
 
+    public bool IsActive => CurrentLevel > 0;
     public int CurrentLevel {get; private set;} = 0;
     public double AccumulatedMoney {get; private set;}
     public string Name => _businessData.Name;
@@ -25,6 +27,7 @@ public class BusinessBehaviour : MonoBehaviour, IBusiness, IClickable
 
     private void Start()
     {
+        Debug.Log("BusinessBehaviour  Start");
         if(!_isInitialized)
         {
             Initialize(_businessData.DefaultLevel, AccumulatedMoney, 0);
@@ -57,6 +60,10 @@ public class BusinessBehaviour : MonoBehaviour, IBusiness, IClickable
         _levelSeter.Init(CurrentLevel);
         AccumulatedMoney = lastAccumulatedMoney + IncomePerMinute * deltaMinutes;
         _isInitialized = true;
+        if(CurrentLevel > 0)
+        {
+            OnActivated?.Invoke();
+        }
     }
 
     public void SendIncome()
@@ -73,6 +80,7 @@ public class BusinessBehaviour : MonoBehaviour, IBusiness, IClickable
         CurrentLevel++;
         _levelSeter.SetLevel(CurrentLevel);
         OnUpgraded?.Invoke(spentMoney);
+        if(CurrentLevel == 1) OnActivated?.Invoke();
     }
 
     public void OnClicked()

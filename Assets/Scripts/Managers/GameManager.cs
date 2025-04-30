@@ -8,16 +8,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Initialize();
-    }
-
-    private void OnEnable()
-    {
         BusinessBehaviour.OnUpgraded += OnBusinessUpgraded;
         BusinessBehaviour.OnIncomeSent += ReceiveMoneyFromBusiness;
-        // BusinessBehaviour.OnLevelSet += CalculateTotalIncome;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         BusinessBehaviour.OnUpgraded -= OnBusinessUpgraded;
         BusinessBehaviour.OnIncomeSent -= ReceiveMoneyFromBusiness;
